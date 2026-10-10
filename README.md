@@ -4,14 +4,15 @@ Ghostty + oh-my-bash + Starship, Catppuccin Mocha theme, and the Bibata Modern C
 
 ## Install
 
-1. Install Ghostty: https://ghostty.org/docs/install/binary
-2. Run:
+1. Run:
    ```bash
    ./install.sh
    ```
    It backs up your existing `~/.bashrc`, `~/.config/ghostty/config` and `~/.config/starship.toml` first.
    **It replaces `~/.bashrc`**, so afterwards copy anything you need (PATH, nvm, pyenv…) back from the `.bak-*` file.
-3. Restart Ghostty.
+2. Open Ghostty (restart it if it was already open).
+
+Ghostty is installed via apt where Ubuntu packages it (e.g. 26.04). Otherwise the script tells you to install it manually: https://ghostty.org/docs/install/binary
 
 ## What's included
 

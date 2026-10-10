@@ -10,6 +10,16 @@ echo "==> Installing CLI tools (needs sudo)"
 sudo apt update
 sudo apt install -y git curl fzf zoxide eza bat fd-find fonts-jetbrains-mono
 
+echo "==> Installing Ghostty"
+if command -v ghostty >/dev/null; then
+  echo "already installed"
+elif apt-cache show ghostty >/dev/null 2>&1; then
+  sudo apt install -y ghostty
+else
+  echo "Ghostty isn't in your apt repositories (Ubuntu 26.04 includes it)."
+  echo "Install it manually: https://ghostty.org/docs/install/binary"
+fi
+
 echo "==> Installing oh-my-bash"
 if [ ! -d "$HOME/.oh-my-bash" ]; then
   git clone --depth=1 https://github.com/ohmybash/oh-my-bash.git "$HOME/.oh-my-bash"
