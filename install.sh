@@ -30,6 +30,19 @@ cp "$tmp"/SymbolsNerdFont*.ttf "$HOME/.local/share/fonts/"
 rm -rf "$tmp"
 fc-cache -f >/dev/null
 
+echo "==> Installing Bibata Modern Classic mouse cursor"
+if [ ! -d "$HOME/.icons/Bibata-Modern-Classic" ]; then
+  mkdir -p "$HOME/.icons"
+  tmp=$(mktemp -d)
+  curl -fsSL -o "$tmp/c.tar.xz" https://github.com/ful1e5/Bibata_Cursor/releases/download/v2.0.6/Bibata-Modern-Classic.tar.xz
+  tar -xJf "$tmp/c.tar.xz" -C "$HOME/.icons"
+  rm -rf "$tmp"
+fi
+if command -v gsettings >/dev/null; then
+  gsettings set org.gnome.desktop.interface cursor-theme 'Bibata-Modern-Classic'
+  gsettings set org.gnome.desktop.interface cursor-size 20
+fi
+
 echo "==> Copying configs"
 mkdir -p "$HOME/.config/ghostty"
 backup "$HOME/.config/ghostty/config"

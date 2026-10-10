@@ -1,6 +1,6 @@
 # Terminal setup
 
-Ghostty + oh-my-bash + Starship, Catppuccin Mocha theme. Built for Ubuntu with bash.
+Ghostty + oh-my-bash + Starship, Catppuccin Mocha theme, and the Bibata Modern Classic mouse cursor. Built for Ubuntu with bash.
 
 ## Install
 
@@ -20,6 +20,9 @@ Ghostty + oh-my-bash + Starship, Catppuccin Mocha theme. Built for Ubuntu with b
 | `ghostty/config` | `~/.config/ghostty/config` |
 | `starship.toml` | `~/.config/starship.toml` |
 | `bashrc` | `~/.bashrc` |
+
+Mouse cursor: [Bibata Modern Classic](https://github.com/ful1e5/Bibata_Cursor) v2.0.6, size 20, installed to `~/.icons` and applied via GNOME settings.
+Some apps only pick up the new cursor after logging out and back in.
 
 ## Cheat sheet
 
