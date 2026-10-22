@@ -1,29 +1,26 @@
-# Terminal setup
+# dotfiles
 
-Ghostty + oh-my-bash + Starship, Catppuccin Mocha theme, and the Bibata Modern Classic mouse cursor. Built for Ubuntu with bash.
+Config and app setup for my Ubuntu dev machine. No secrets or data. `make help` lists every target.
 
-## Install
+## Snapshot (old machine)
 
-1. Run:
-   ```bash
-   ./install.sh
-   ```
-   It backs up your existing `~/.bashrc`, `~/.config/ghostty/config` and `~/.config/starship.toml` first.
-   **It replaces `~/.bashrc`**, so afterwards copy anything you need (PATH, nvm, pyenv…) back from the `.bak-*` file.
-2. Open Ghostty (restart it if it was already open).
+```bash
+make backup   # config -> home/, package lists + repo URLs -> packages/
+```
 
-Ghostty is installed via apt where Ubuntu packages it (e.g. 26.04). Otherwise the script tells you to install it manually: https://ghostty.org/docs/install/binary
+## Rebuild (fresh machine)
 
-## What's included
+```bash
+sudo apt install -y make git
+cd dotfiles
+make install     # everything; or run single targets
+```
 
-| File | Goes to |
-|---|---|
-| `ghostty/config` | `~/.config/ghostty/config` |
-| `starship.toml` | `~/.config/starship.toml` |
-| `bashrc` | `~/.bashrc` |
+Log out and back in afterwards for the docker group and GNOME settings.
 
-Mouse cursor: [Bibata Modern Classic](https://github.com/ful1e5/Bibata_Cursor) v2.0.6, size 20, installed to `~/.icons` and applied via GNOME settings.
-Some apps only pick up the new cursor after logging out and back in.
+## Not covered
+
+SSH/AWS/GPG keys, project `.env` files, databases and docker volumes, browser profiles, app logins.
 
 ## Cheat sheet
 
@@ -51,9 +48,3 @@ Some apps only pick up the new cursor after logging out and back in.
 | `alt+1..5` | go to tab |
 | `ctrl+shift+,` | reload config |
 
-## VS Code terminal icons
-
-Ghostty has icons built in. For VS Code, set this in settings.json (the font is installed by `install.sh`):
-```json
-"terminal.integrated.fontFamily": "'JetBrains Mono', 'Symbols Nerd Font Mono', monospace"
-```
