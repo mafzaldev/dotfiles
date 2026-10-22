@@ -1,0 +1,18 @@
+{
+  "claude-plugins-official": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-plugins-official"
+    },
+    "installLocation": "/home/afzal/.claude/plugins/marketplaces/claude-plugins-official",
+    "lastUpdated": "2026-10-22T14:15:14.065Z"
+  },
+  "caveman": {
+    "source": {
+      "source": "github",
+      "repo": "JuliusBrussee/caveman"
+    },
+    "installLocation": "/home/afzal/.claude/plugins/marketplaces/caveman",
+    "lastUpdated": "2026-08-03T06:07:19.572Z"
+  }
+}
