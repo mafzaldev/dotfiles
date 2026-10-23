@@ -216,9 +216,18 @@ if command -v eza >/dev/null; then
   alias la='eza -lah --icons=auto --git --group-directories-first'
   alias lt='eza --tree --level=2 --icons=auto'
 fi
-command -v batcat >/dev/null && alias cat='batcat --paging=never --style=plain'
-command -v fdfind >/dev/null && alias fd='fdfind'
-command -v fdfind >/dev/null && export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --exclude .git'
+# Ubuntu names them batcat/fdfind, Fedora bat/fd
+if command -v batcat >/dev/null; then
+  alias cat='batcat --paging=never --style=plain'
+elif command -v bat >/dev/null; then
+  alias cat='bat --paging=never --style=plain'
+fi
+if command -v fdfind >/dev/null; then
+  alias fd='fdfind'
+  export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --exclude .git'
+elif command -v fd >/dev/null; then
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude .git'
+fi
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border=rounded --info=inline
   --color=bg+:#313244,spinner:#f5e0dc,hl:#f38ba8,fg:#cdd6f4,header:#f38ba8,info:#cba6f7
   --color=pointer:#f5e0dc,marker:#b4befe,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8,border:#6c7086'
