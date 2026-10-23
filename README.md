@@ -1,20 +1,25 @@
 # dotfiles
 
-Config and app setup for my Ubuntu dev machine (GNOME, bash, Ghostty). One `make install` on a fresh
-Ubuntu rebuilds the whole dev environment. No secrets or data are stored here.
+Config and app setup for my dev machine (bash, Ghostty). One `make install` on a fresh
+**Ubuntu** (and derivatives like Mint, Pop!_OS, Kubuntu) or **Fedora** (Workstation or KDE) rebuilds the
+whole dev environment, on **GNOME** or **KDE Plasma**. No secrets or data are stored here.
+
+The distro is detected from `/etc/os-release` and the desktop from `$XDG_CURRENT_DESKTOP`.
+Override either one: `make install DISTRO=fedora DESKTOP=kde`.
 
 ## Quick start
 
-On a fresh Ubuntu install:
+On a fresh install:
 
 ```bash
-sudo apt install -y make git
+sudo apt install -y make git     # Ubuntu
+sudo dnf install -y make git     # Fedora
 git clone https://github.com/mafzaldev/dotfiles.git ~/dotfiles
 cd ~/dotfiles
 make install
 ```
 
-Then log out and back in so the docker group and GNOME settings take effect.
+Then log out and back in so the docker group and desktop settings take effect.
 
 Every step is safe to re-run. If one fails, fix it and run just that step, e.g. `make apps`.
 Run `make help` to list all steps.
@@ -29,19 +34,26 @@ git diff        # check nothing private slipped in
 ```
 
 `make backup` copies the config files listed below into `home/` and refreshes the VS Code extension
-list and GNOME settings in `packages/`.
+list and the settings of whichever desktop is running: `packages/dconf-*.ini` on GNOME,
+`packages/kde.ini` on KDE.
 
 ## What `make install` does
 
-Steps run in this order:
+Steps run in this order (`mongodb` runs last). These differ per distro (`distros/ubuntu.mk`, `distros/fedora.mk`):
+
+| Step | Ubuntu | Fedora |
+|---|---|---|
+| `base` | `apt upgrade`, curl, gnupg, jq, rsync, unzip | `dnf upgrade`, same tools + dnf5 plugins |
+| `repos` | Docker, ngrok, pgAdmin 4, MongoDB 8.0 | Docker, VS Code, pgAdmin 4, MongoDB 8.0 (RHEL 9 repo), COPR for Ghostty, lazygit, Starship |
+| `packages` | `packages/ubuntu.txt` + Docker, ngrok, pgAdmin 4 | `packages/fedora.txt` + Docker, VS Code, Ghostty, lazygit, Starship, pgAdmin 4, ngrok |
+| `apps` | .debs: Chrome, VS Code, Compass, RedisInsight, Free Download Manager | .rpms: Chrome, Compass, RedisInsight |
+| `store-apps` | Snap: Slack, Spotify | Flatpak: Slack, Spotify, Free Download Manager |
+| `mongodb` | `mongodb-org` 8.0 (server, mongosh, tools) | `mongodb-org` 8.0 from MongoDB's RHEL 9 repo + MongoDB's SELinux policy |
+
+The rest is the same on both:
 
 | Step | What it does |
 |---|---|
-| `base` | `apt update && apt upgrade`, installs curl, gnupg, jq, rsync, unzip |
-| `repos` | Adds apt repos for Docker, ngrok, pgAdmin 4 and MongoDB 8.0 |
-| `packages` | Installs everything in `packages/apt.txt`, plus Docker, ngrok, pgAdmin 4 and MongoDB |
-| `apps` | Downloads and installs Google Chrome, VS Code, MongoDB Compass, LocalSend, RedisInsight and Free Download Manager |
-| `snaps` | Slack, Spotify |
 | `shell` | oh-my-bash |
 | `node` | nvm, Node.js 26.12.1 (default), pnpm, and the pnpm globals in `packages/pnpm-global.txt` |
 | `python` | uv and Python 3.12 |
@@ -49,18 +61,23 @@ Steps run in this order:
 | `cli` | Claude Code |
 | `vscode` | VS Code extensions from `packages/vscode-extensions.txt` |
 | `dotfiles` | Copies `home/` into `~`. Any file it overwrites is kept as `<name>.pre-dotfiles` |
-| `gnome` | Loads the GNOME settings from `packages/dconf-*.ini` |
-| `services` | Adds you to the `docker` group, starts Docker and Postgres at boot. Redis, nginx and MongoDB are installed but not started at boot |
+| `desktop` | **GNOME:** installs Tweaks and the Extensions app, loads `packages/dconf-*.ini`. **KDE:** applies `packages/kde.ini` (see below) |
+| `services` | Adds you to the `docker` group, starts Docker and Postgres at boot (initialises Postgres first on Fedora). Redis/Valkey, nginx and MongoDB are installed but not started at boot |
 
 Versions can be overridden per run, e.g. `make node NODE_DEFAULT=24` or `make python PYTHON_VERSIONS="3.12 3.13"`.
+To preview another distro's commands: `make -n install DISTRO=fedora`.
 
-### apt packages
+### System packages
 
-7zip, bat, btop, build-essential, ca-certificates, curl, dbus-x11, drawing, eza, fastfetch, fd-find, ffmpeg,
-flatpak, fonts-jetbrains-mono, fonts-noto-color-emoji, fzf, ghostty, git, gnome-shell-extensions, gnome-tweaks,
-gnupg, jq, lazygit, libfuse2t64, libnotify-bin, ncdu, net-tools, nginx, pkg-config, podman, postgresql,
-python3-dev, python3-pip, python3-venv, redis, rsync, starship, testdisk, unrar, unzip, vlc, wl-clipboard, zip,
-zoxide
+Same tools on both distros, under each distro's package names: `packages/ubuntu.txt` and `packages/fedora.txt`.
+
+7zip, bat, btop, compilers (build-essential / gcc, gcc-c++, make), curl, drawing, eza, fastfetch, fd, ffmpeg,
+flatpak, JetBrains Mono and Noto Color Emoji fonts, fzf, ghostty, git, gnupg, jq,
+lazygit, ncdu, net-tools, nginx, podman, PostgreSQL, Python dev headers and pip, Redis (Valkey on Fedora), rsync,
+starship, testdisk, unrar, unzip, vlc, wl-clipboard, zip, zoxide
+
+Fedora differences: `ffmpeg-free` instead of full ffmpeg (use RPM Fusion for the full build), Valkey instead of
+Redis (drop-in compatible), and no Free Download Manager .rpm, so it comes from Flathub.
 
 ### VS Code extensions
 
@@ -84,16 +101,40 @@ Live Server, vscode-icons.
 | `.local/share/fonts/` | Symbols Nerd Font (icons), Inter |
 | `.icons/Bibata-Modern-Classic/` | Mouse cursor |
 
-GNOME settings in `packages/`: desktop and interface (theme, fonts, cursor, touchpad, mouse), shell
+## Desktop settings
+
+**GNOME** (`packages/dconf-*.ini`): desktop and interface (theme, fonts, cursor, touchpad, mouse), shell
 (dock favourites, enabled extensions), mutter (window behaviour) and custom keyboard shortcuts.
+
+**KDE Plasma** (`packages/kde.ini`, applied with `kwriteconfig` by `scripts/kde-settings.sh`), mirroring the
+GNOME setup:
+
+| Setting | Value |
+|---|---|
+| Colour scheme | Breeze Dark |
+| Cursor | Bibata Modern Classic, size 20 |
+| Fonts | Inter 11 (UI, menus, titles), JetBrains Mono 11 (fixed width) |
+| Screen locking | Never auto-locks |
+| Power | Screen never dims or turns off when idle (AC and battery) |
+
+Not carried over to KDE: the dock and GNOME extensions, the Yaru theme and Ubuntu wallpaper, and touchpad/mouse
+speed (KDE stores those per device). For tiling, use KWin's built-in tiling.
+
+To change a KDE setting, edit `packages/kde.ini`, or change it in System Settings and run `make backup` on the
+KDE machine to pull the new values into the file.
 
 ## Layout
 
 ```
-Makefile                 install steps (make help)
+Makefile                 shared install steps, distro detection (make help)
+distros/ubuntu.mk        Ubuntu-specific steps (apt, .debs, snaps)
+distros/fedora.mk        Fedora-specific steps (dnf, .rpms, COPR, Flatpak)
+desktops/gnome.mk        GNOME packages and settings
+desktops/kde.mk          KDE Plasma settings
+scripts/kde-settings.sh  applies packages/kde.ini, or refreshes it from the running KDE session
 scripts/backup.sh        refreshes home/ and packages/ from the current machine
-scripts/update-vscode.sh installs or updates VS Code from the official .deb
-packages/                apt list, pnpm globals, VS Code extensions, GNOME settings
+scripts/update-vscode.sh installs or updates VS Code from the official .deb (Ubuntu)
+packages/                ubuntu.txt, fedora.txt, pnpm globals, VS Code extensions, GNOME and KDE settings
 home/                    files copied into ~ by `make dotfiles`
 ```
 
