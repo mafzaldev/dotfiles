@@ -31,9 +31,15 @@ done
 echo "==> Package lists"
 command -v code >/dev/null && code --list-extensions > "$DOT/packages/vscode-extensions.txt"
 
-echo "==> GNOME settings"
-for path in desktop shell mutter settings-daemon/plugins/media-keys; do
-  dconf dump "/org/gnome/$path/" > "$DOT/packages/dconf-${path//\//.}.ini"
-done
+if command -v gnome-shell >/dev/null; then
+  echo "==> GNOME settings"
+  for path in desktop shell mutter settings-daemon/plugins/media-keys; do
+    dconf dump "/org/gnome/$path/" > "$DOT/packages/dconf-${path//\//.}.ini"
+  done
+fi
+if command -v plasmashell >/dev/null; then
+  echo "==> KDE settings"
+  "$DOT/scripts/kde-settings.sh" dump
+fi
 
 echo "Done. Review with: git -C $DOT status"

@@ -1,4 +1,4 @@
-# Curated dev/desktop packages from the Ubuntu archive (third-party repos are handled in the Makefile).
+# Ubuntu packages from the official archive. Third-party ones are in distros/ubuntu.mk.
 7zip
 bat
 btop
@@ -17,8 +17,6 @@ fonts-noto-color-emoji
 fzf
 ghostty
 git
-gnome-shell-extensions
-gnome-tweaks
 gnupg
 jq
 lazygit
